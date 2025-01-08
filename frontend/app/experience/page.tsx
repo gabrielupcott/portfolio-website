@@ -1,20 +1,39 @@
 import React, { JSX } from 'react'
 
+interface Experience {
+  id: number
+  order: number
+  role: string
+  company: string
+  startDate: string
+  endDate?: string
+  description: any[]
+}
+
+interface StrapiResponse {
+  data: Experience[];
+}
+
 const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337'
 
 // Fetch data from Strapi
-async function getExperiences() {
-  const res = await fetch(`${STRAPI_URL}/api/experiences?populate=*`, {
-    cache: 'no-store',
-  })
-  if (!res.ok) {
-    throw new Error('Failed to fetch experiences from Strapi')
-  }
-  const data = await res.json()
-  // sort by order field
-  data.data.sort((a: any, b: any) => a.order - b.order)
+async function getExperiences(): Promise<Experience[]> {
+  try {
+    const res = await fetch(`${STRAPI_URL}/api/experiences?populate=*`, {
+      cache: 'no-store',
+    })
+    if (!res.ok) {
+      throw new Error('Failed to fetch experiences from Strapi')
+    }
+    const data: StrapiResponse = await res.json()
+    // Sort by order field directly from the experience object
+    data.data.sort((a: Experience, b: Experience) => a.order - b.order)
 
-  return data?.data
+    return data.data
+  } catch (error) {
+    console.error('Error fetching experiences:', error)
+    return [] // Return an empty array on error
+  }
 }
 
 /**
@@ -47,7 +66,7 @@ function renderBlocks(blocks: any[] = []) {
         if (block.format === 'unordered') {
           return (
             <ul key={idx} className="list-disc list-inside mb-4">
-              {block.children.map((childBlock: any, childIdx: number) => {
+              {block.children.map((childBlock: any) => {
                 // childBlock might be a "list-item" or a nested "list"
                 return renderBlocks([childBlock]) // Reuse renderBlocks
               })}
@@ -57,7 +76,7 @@ function renderBlocks(blocks: any[] = []) {
           // If there's a "format: ordered" case:
           return (
             <ol key={idx} className="list-decimal list-inside mb-4">
-              {block.children.map((childBlock: any, childIdx: number) => {
+              {block.children.map((childBlock: any) => {
                 return renderBlocks([childBlock])
               })}
             </ol>
@@ -103,7 +122,12 @@ function renderChildren(children: any[] = []) {
 }
 
 export default async function ExperiencePage() {
-  const experiences = await getExperiences()
+  let experiences: Experience[] = []
+  try {
+    experiences = await getExperiences()
+  } catch (error) {
+    console.error('Error loading experiences:', error)
+  }
 
   return (
     <main className="min-h-screen">
@@ -116,28 +140,33 @@ export default async function ExperiencePage() {
           What I've worked on professionally along with my education.
         </p>
 
-        <div className="space-y-8">
-          {experiences?.map((exp: any) => {
-            const { id, role, company, startDate, endDate, description } = exp
+        {/* Check if experiences array is empty */}
+        {experiences.length === 0 ? (
+          <p className="text-red-600">Failed to load experiences... <br/><br/> Double check your connection or just checkout my GitHub linked on the home page!</p>
+        ) : (
+          <div className="space-y-8">
+            {experiences.map((exp) => {
+              const { id, role, company, startDate, endDate, description } = exp;
 
-            return ( 
-              <div key={id} className='border-t border-gray-200 pt-4 hover:bg-gray-200/60 px-8 rounded'>
-                {/* Role & Company */}
-                <h2 className="font-semibold text-lg mb-1 text-gray-800">{role}</h2>
-                {company && (
-                  <p className="text-sm text-gray-600">
-                    {company} | {startDate} - {endDate? endDate : 'Present'}
-                  </p>
-                )}
+              return ( 
+                <div key={id} className='border-t border-gray-200 pt-4 hover:bg-gray-200/60 px-8 rounded'>
+                  {/* Role & Company */}
+                  <h2 className="font-semibold text-lg mb-1 text-gray-800">{role}</h2>
+                  {company && (
+                    <p className="text-sm text-gray-600">
+                      {company} | {startDate} - {endDate ? endDate : 'Present'}
+                    </p>
+                  )}
 
-                {/* Render the block array */}
-                <div className="mt-4">
-                  {renderBlocks(description)}
+                  {/* Render the block array */}
+                  <div className="mt-4">
+                    {renderBlocks(description)}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </div>
     </main>
   )
