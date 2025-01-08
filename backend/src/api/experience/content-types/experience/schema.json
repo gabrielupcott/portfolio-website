@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "experiences",
+  "info": {
+    "singularName": "experience",
+    "pluralName": "experiences",
+    "displayName": "Experience",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "role": {
+      "type": "string"
+    },
+    "company": {
+      "type": "string"
+    },
+    "startDate": {
+      "type": "date"
+    },
+    "endDate": {
+      "type": "date"
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "order": {
+      "type": "integer"
+    }
+  }
+}
