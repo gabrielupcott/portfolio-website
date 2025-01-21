@@ -1,4 +1,5 @@
 import React, { JSX } from 'react'
+import Link from 'next/link'
 
 interface Experience {
   id: number
@@ -91,7 +92,7 @@ function renderBlocks(blocks: any[] = []) {
         )
 
       default:
-        // If we don’t recognize the block, return null or debug info
+        // If we don't recognize the block, return null or debug info
         return null
     }
   })

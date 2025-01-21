@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
 
 interface Project {
@@ -63,7 +65,7 @@ export default async function WorkPage() {
               const { id, title, description, techStack, githubLink } = proj;
 
               return (
-                <a
+                <Link
                   key={id}
                   href={githubLink || '#'}
                   target="_blank"
@@ -87,7 +89,7 @@ export default async function WorkPage() {
                   </div>
                   {/* Description */}
                   <p className="text-sm text-gray-600">{description}</p>
-                </a>
+                </Link>
               );
             })}
           </div>
