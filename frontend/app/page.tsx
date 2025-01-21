@@ -1,4 +1,5 @@
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa'
+import Link from 'next/link'
 
 export default function HomePage() {
   return (
@@ -9,7 +10,7 @@ export default function HomePage() {
         </h1>
 
         <p className="mb-4">
-          I’m a new software development graduate and aspiring software engineer who loves creating
+          I'm a new software development graduate and aspiring software engineer who loves creating
           modern web applications.
         </p>
 
@@ -17,19 +18,13 @@ export default function HomePage() {
 
         <p className="mb-4">
           Check out my{' '}
-          <a
-            href="/projects"
-            className="text-black bg-teal-100/75 rounded hover:opacity-70"
-          >
+          <Link href="/projects" className="text-black bg-teal-100/75 rounded hover:opacity-70">
             recent work
-          </a>{' '}
+          </Link>{' '}
           or my{' '}
-          <a
-            href="/experience"
-            className="text-black bg-lime-200/50 rounded hover:opacity-70"
-          >
+          <Link href="/experience" className="text-black bg-lime-200/50 rounded hover:opacity-70">
             experiences
-          </a>{' '}
+          </Link>{' '}
           to learn more, <br/>
           or{' '}
           <a
