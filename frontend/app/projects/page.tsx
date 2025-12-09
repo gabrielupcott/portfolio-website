@@ -21,11 +21,15 @@ interface StrapiResponse {
 async function getProjects(): Promise<Project[]> {
   try {
     const res = await fetch(`${STRAPI_URL}/api/projects?populate=*`, {
-      cache: 'no-store', // always fetch fresh (SSR)
+      cache: 'no-store',
+      headers: {
+        'Authorization': `Bearer ${process.env.STRAPI_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!res.ok) {
-      throw new Error('Failed to fetch projects from Strapi');
+      throw new Error(`Failed to fetch projects from Strapi: ${res.status} ${res.statusText}`);
     }
 
     const data: StrapiResponse = await res.json();
@@ -33,10 +37,9 @@ async function getProjects(): Promise<Project[]> {
     return data.data;
   } catch (error) {
     console.error('Error fetching projects:', error)
-    return [] // Return an empty array on error
+    return []
   }
 }
-
 export default async function WorkPage() {
   let projects: Project[] = []
   try {

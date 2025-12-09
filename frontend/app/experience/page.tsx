@@ -21,21 +21,24 @@ async function getExperiences(): Promise<Experience[]> {
   try {
     const res = await fetch(`${STRAPI_URL}/api/experiences?populate=*`, {
       cache: 'no-store',
+      headers: {
+        'Authorization': `Bearer ${process.env.STRAPI_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
     })
+    
     if (!res.ok) {
-      throw new Error('Failed to fetch experiences from Strapi')
+      throw new Error(`Failed to fetch experiences from Strapi: ${res.status} ${res.statusText}`)
     }
+    
     const data: StrapiResponse = await res.json()
-    // Sort by order field directly from the experience object
     data.data.sort((a: Experience, b: Experience) => a.order - b.order)
-
     return data.data
   } catch (error) {
     console.error('Error fetching experiences:', error)
-    return [] // Return an empty array on error
+    return []
   }
 }
-
 /**
  * Renders the "description" array (blocks) from Strapi.
  * Each block can be paragraph, heading, list, etc.
